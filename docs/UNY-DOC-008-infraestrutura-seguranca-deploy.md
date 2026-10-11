@@ -1154,7 +1154,9 @@ Cada etapa tem **teste de aceite** e **reversão**. **Nada é aplicado sem snaps
 | 24 | Registro privado de imagens (por exemplo o do GitHub) e guarda da credencial | Decisão | Seção 6.3 |
 | 25 | ~~Caminho do socket do MySQL~~ **Medido:** `/var/run/mysqld/mysqld.sock`. Resta conferir as permissões do socket | Verificação | Seções 6.3 e 9.2 |
 | 26 | O que significa "mais estruturado" para migrar para VPS própria (critério e data) | Decisão | Seções 4.5 e 18 |
-| 27 | **Alguém conecta ao MySQL por fora (porta 3306)?** Quem e de onde; contas com host diferente de `localhost` | **Verificação (urgente)** | Seção 4.6 |
+| 27 | ~~Alguém conecta ao MySQL por fora (porta 3306)?~~ **Verificado em 11/10/2026:** nenhuma conexão externa; única conta remota era `root@%`. **Feito:** `ufw` ativo (22, 80, 443; IPv4 e IPv6), 3306 fechada (confirmada de fora) e `root@%` renomeada para `root@localhost`. Painel, sites, phpMyAdmin e gravação de nomes como "Walter" testados após a mudança | Concluído | Seção 4.6 |
+| 31 | O painel (`db/conecta.php`) conecta como `root` do MySQL. Meta: usuário próprio por sistema, com permissões só do seu banco (como `elc_user` e `pgmed_user`). Exige mexer no código do painel | Decisão/tarefa | Seção 9.2 |
+| 32 | Espelho `asi-fs-o.contabo.net` do `apt` não resolveu em 11/10/2026 (pacote `ttf-mscorefonts-installer` pendente). Rodar `apt-get update` e confirmar antes de instalar o Docker (I1) | Verificação | Seção 6.2 |
 | 28 | Vincular o servidor ao **Ubuntu Pro** e conferir se aparece o `esm-apps` | Verificação | SEC-005 e seção 6.2, risco 7 |
 | 29 | ~~Quem bloqueava os nomes?~~ **ModSecurity** (módulo compilado à mão), `modsecurity on` em `nginx.conf` e `off` nos hosts do painel. Resta: em que bloco está a diretiva, o conteúdo de `/etc/nginx/nginx-modsecurity.conf` (sem segredos) e **qual regra** barrava (ID no registro de auditoria) | Verificação | Seção 7.7 |
 | 30 | Decisão sobre o ModSecurity nos hosts do AVA (detecção, exceções por campo, `/webhooks/` sem filtro) e quem mantém o módulo compilado | Decisão | Seção 7.7 |
