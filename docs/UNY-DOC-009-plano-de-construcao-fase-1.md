@@ -56,7 +56,7 @@ Detalhe e comandos em UNY-DOC-008, seções 4.6, 6 e 19.
 
 | Etapa | O que | Aceite | Depende de |
 |---|---|---|---|
-| **I0** | Firewall (`ufw`: 22, 80, 443) e fechamento da porta **3306**, depois de confirmar que ninguém usa o MySQL de fora (4.6) | A 3306 não responde de fora; painel e sites continuam no ar | Nada. **Fazer primeiro, independe do AVA** |
+| **I0** | Firewall (`ufw`: 22, 80, 443) e fechamento da porta **3306**, depois de confirmar que ninguém usa o MySQL de fora (4.6) | A 3306 não responde de fora; painel e sites continuam no ar | Nada. **Concluída em 11/10/2026** (firewall ativo, 3306 fechada, `root@%` → `root@localhost`) |
 | **I0b** | Usuário `deploy` e SSH por chave; swap de 2 GiB; Ubuntu Pro vinculado | Acesso por chave testado antes de fechar a senha | I0 |
 | **I1** | Instalar `docker.io` e `docker-compose-v2`; contêiner PHP 8.3 de teste; conferir `iptables-save` antes e depois | Nada escuta em `0.0.0.0` além de 22, 80, 443; legado intacto | I0 |
 | **I2** | Homologação: Compose, scripts `ava-ctl` e `ava-run`, bancos `ava_homolog` e `ava_homolog_audit`, vhost com senha, DNS curinga, primeiro certificado | `https://ava-homolog…/saude` responde | I1 |
