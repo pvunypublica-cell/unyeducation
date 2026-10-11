@@ -23,3 +23,12 @@ Plataforma de cursos livres multi-parceiro (white label), com experiência de al
 - Código entra por *pull request* em ramo próprio, nunca direto no `main` (a exceção é este commit inicial).
 - Nenhuma senha, chave, `.env` ou dado real de aluno (CPF) no repositório, nem de teste.
 - Dados de teste são sempre fictícios.
+
+## Desenvolvimento
+
+- Requisitos: PHP 8.3+, Composer, MySQL (a produção usa 5.7; o CI testa em 5.7).
+- `cp .env.example .env && composer install && php artisan key:generate`
+- Crie os bancos `unyeducation` e `unyeducation_test` e rode `php artisan test`.
+- Os testes recusam rodar em banco cujo nome não contenha "test".
+- Trabalho sempre em ramo + pull request; nunca direto em `main`.
+- Docker de produção: `docker/php/` (ver docs/UNY-DOC-008).
