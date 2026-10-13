@@ -65,6 +65,41 @@ return [
             ]) : [],
         ],
 
+        // Auditoria (ava_audit): a aplicação usa uma conta só com INSERT e SELECT;
+        // as migrações usam a conta com permissão de criar tabelas. Sem variáveis
+        // próprias, ambas usam a conexão principal (desenvolvimento local).
+        'audit' => [
+            'driver' => 'mysql',
+            'host' => env('AUDIT_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('AUDIT_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('AUDIT_DB_DATABASE', 'ava_audit'),
+            'username' => env('AUDIT_DB_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('AUDIT_DB_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('AUDIT_DB_SOCKET', env('DB_SOCKET', '')),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'timezone' => '+00:00',
+            'engine' => 'InnoDB',
+        ],
+
+        'audit_migrator' => [
+            'driver' => 'mysql',
+            'host' => env('AUDIT_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('AUDIT_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('AUDIT_DB_DATABASE', 'ava_audit'),
+            'username' => env('AUDIT_MIGRATOR_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('AUDIT_MIGRATOR_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('AUDIT_DB_SOCKET', env('DB_SOCKET', '')),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'timezone' => '+00:00',
+            'engine' => 'InnoDB',
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
