@@ -113,7 +113,7 @@ class AulaController extends Controller
     {
         $aluno = Auth::guard('aluno')->user();
         $aula = Aula::query()->publicadas()->findOrFail($id);
-        $curso = Curso::query()->publicados()->findOrFail($aula->curso_id);
+        $curso = Curso::query()->acessiveis()->findOrFail($aula->curso_id);
         $matricula = $this->progresso->matriculaAtiva($aluno, $curso);
 
         // Sem matrícula ativa não há acesso à aula (curso gratuito se inicia pela página do curso).

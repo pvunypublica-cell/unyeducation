@@ -85,4 +85,23 @@ class Matriz
 
         return true;
     }
+
+    /**
+     * Como permite(), mas conferindo o dono do recurso para o escopo "proprios": o instrutor
+     * só age em recursos em que ele é o instrutor (UNY-DOC-003, FS-PER).
+     */
+    public static function permiteSobre(object $usuario, string $acao, ?int $donoId): bool
+    {
+        if (! self::permite($usuario, $acao)) {
+            return false;
+        }
+
+        $escopo = self::escopo(self::papelDe($usuario), $acao);
+
+        if ($escopo === 'todos') {
+            return true;
+        }
+
+        return $donoId !== null && $usuario instanceof MembroEquipe && $usuario->getKey() === $donoId;
+    }
 }

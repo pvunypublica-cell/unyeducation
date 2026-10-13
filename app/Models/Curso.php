@@ -57,6 +57,17 @@ class Curso extends Model
         return $consulta->where('estado', self::PUBLICADO);
     }
 
+    /** Cursos que um aluno matriculado ainda enxerga: publicados e arquivados (FS: arquivado mantém acesso). */
+    public function scopeAcessiveis(Builder $consulta): Builder
+    {
+        return $consulta->whereIn('estado', [self::PUBLICADO, self::ARQUIVADO]);
+    }
+
+    public function matriculas(): HasMany
+    {
+        return $this->hasMany(Matricula::class);
+    }
+
     public function capa(): BelongsTo
     {
         return $this->belongsTo(Arquivo::class, 'capa_arquivo_id');

@@ -5,6 +5,7 @@ use App\Http\Controllers\ArquivoController;
 use App\Http\Controllers\AulaController;
 use App\Http\Controllers\BuscaController;
 use App\Http\Controllers\CursoController;
+use App\Http\Controllers\Equipe;
 use App\Http\Controllers\EquipeAuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LinkMagicoController;
@@ -51,7 +52,37 @@ Route::prefix('equipe')->group(function () {
     });
 
     Route::middleware('auth:equipe')->group(function () {
-        Route::get('/', [EquipeAuthController::class, 'painel'])->name('equipe.painel');
+        Route::get('/', [Equipe\PainelController::class, 'index'])->name('equipe.painel');
         Route::post('/sair', [EquipeAuthController::class, 'sair'])->name('equipe.logout');
+
+        // Cursos (M3a)
+        Route::get('/cursos', [Equipe\CursoController::class, 'index'])->name('equipe.cursos');
+        Route::get('/cursos/novo', [Equipe\CursoController::class, 'criar'])->name('equipe.cursos.criar');
+        Route::post('/cursos', [Equipe\CursoController::class, 'salvar'])->name('equipe.cursos.salvar');
+        Route::get('/cursos/{id}', [Equipe\CursoController::class, 'editar'])->whereNumber('id')->name('equipe.cursos.editar');
+        Route::post('/cursos/{id}', [Equipe\CursoController::class, 'atualizar'])->whereNumber('id')->name('equipe.cursos.atualizar');
+        Route::post('/cursos/{id}/capa', [Equipe\CursoController::class, 'capa'])->whereNumber('id')->name('equipe.cursos.capa');
+        Route::post('/cursos/{id}/publicar', [Equipe\CursoController::class, 'publicar'])->whereNumber('id')->name('equipe.cursos.publicar');
+        Route::post('/cursos/{id}/arquivar', [Equipe\CursoController::class, 'arquivar'])->whereNumber('id')->name('equipe.cursos.arquivar');
+        Route::post('/cursos/{id}/rascunho', [Equipe\CursoController::class, 'rascunho'])->whereNumber('id')->name('equipe.cursos.rascunho');
+        Route::get('/cursos/{id}/previa', [Equipe\CursoController::class, 'previa'])->whereNumber('id')->name('equipe.cursos.previa');
+
+        Route::post('/cursos/{id}/modulos', [Equipe\ModuloController::class, 'salvar'])->whereNumber('id')->name('equipe.modulos.salvar');
+        Route::post('/modulos/{id}', [Equipe\ModuloController::class, 'atualizar'])->whereNumber('id')->name('equipe.modulos.atualizar');
+        Route::post('/modulos/{id}/mover', [Equipe\ModuloController::class, 'mover'])->whereNumber('id')->name('equipe.modulos.mover');
+        Route::post('/modulos/{id}/apagar', [Equipe\ModuloController::class, 'apagar'])->whereNumber('id')->name('equipe.modulos.apagar');
+
+        Route::post('/modulos/{id}/aulas', [Equipe\AulaController::class, 'salvar'])->whereNumber('id')->name('equipe.aulas.salvar');
+        Route::get('/aulas/{id}', [Equipe\AulaController::class, 'editar'])->whereNumber('id')->name('equipe.aulas.editar');
+        Route::post('/aulas/{id}', [Equipe\AulaController::class, 'atualizar'])->whereNumber('id')->name('equipe.aulas.atualizar');
+        Route::post('/aulas/{id}/publicar', [Equipe\AulaController::class, 'publicar'])->whereNumber('id')->name('equipe.aulas.publicar');
+        Route::post('/aulas/{id}/mover', [Equipe\AulaController::class, 'mover'])->whereNumber('id')->name('equipe.aulas.mover');
+        Route::post('/aulas/{id}/apagar', [Equipe\AulaController::class, 'apagar'])->whereNumber('id')->name('equipe.aulas.apagar');
+        Route::post('/aulas/{id}/materiais', [Equipe\AulaController::class, 'enviarMaterial'])->whereNumber('id')->name('equipe.materiais.enviar');
+        Route::post('/materiais/{id}/apagar', [Equipe\AulaController::class, 'apagarMaterial'])->whereNumber('id')->name('equipe.materiais.apagar');
+
+        Route::get('/categorias', [Equipe\CategoriaController::class, 'index'])->name('equipe.categorias');
+        Route::post('/categorias', [Equipe\CategoriaController::class, 'salvar'])->name('equipe.categorias.salvar');
+        Route::post('/categorias/{id}/alternar', [Equipe\CategoriaController::class, 'alternar'])->whereNumber('id')->name('equipe.categorias.alternar');
     });
 });
