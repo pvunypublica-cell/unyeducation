@@ -415,7 +415,8 @@ class CursosDoPainelTest extends TestCase
         $aula = $this->aulasDe($a, $curso)->first();
         $aluno = $this->criarAluno($a);
         $this->matricular($a, $aluno, $curso);
-        $this->actingAs($this->admin($a), 'equipe');
+        $admin = $this->admin($a);
+        $this->actingAs($admin, 'equipe');
 
         $this->post($this->url($a, "/aulas/{$aula->id}/materiais"), [
             'arquivo' => UploadedFile::fake()->createWithContent('../../Apostila Final.pdf', "%PDF-1.4\nconteudo"), 'titulo' => 'Apostila',
@@ -430,7 +431,7 @@ class CursosDoPainelTest extends TestCase
 
         $this->actingAs($aluno, 'aluno')->get($this->urlDe($a, "/materiais/{$material->id}"))->assertOk();
 
-        $this->actingAs($this->admin($a), 'equipe')->post($this->url($a, "/materiais/{$material->id}/apagar"));
+        $this->actingAs($admin, 'equipe')->post($this->url($a, "/materiais/{$material->id}/apagar"));
         Storage::disk('local')->assertMissing($material->arquivo->caminho);
         $this->assertSame(0, $this->contexto($a, fn () => Material::query()->count()));
     }
