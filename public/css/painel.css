@@ -1,0 +1,65 @@
+/* Painel da equipe — usa as mesmas variáveis do tema do ambiente do aluno. */
+body.painel .lateral nav{margin-top:16px}
+.sair-lateral{margin-top:auto}
+.painel main{max-width:1100px}
+.painel main.estreito{max-width:720px}
+.cabeca-pagina{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.cabeca-pagina h1{margin-bottom:6px}
+.indicadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:20px 0 24px}
+.indicador{background:var(--cor-superficie);border:1px solid var(--cor-borda);border-radius:var(--raio);padding:18px;display:flex;flex-direction:column;gap:4px}
+.indicador strong{font-family:var(--fonte-titulo);font-size:32px;line-height:1}
+.indicador span{color:var(--cor-texto-suave);font-size:14px}
+.filtros{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px}
+.formulario,.filtros{display:flex;flex-direction:column;gap:16px}
+.filtros{flex-direction:row}
+.formulario label,.filtros label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--cor-texto-suave)}
+input[type=text],input[type=number],input[type=search],input[type=datetime-local],input[type=file],select,textarea{min-height:44px;padding:10px 12px;border-radius:var(--raio);border:1px solid var(--cor-borda);background:var(--cor-superficie);color:var(--cor-texto);font:inherit;width:100%}
+.filtros select{width:auto;min-width:180px}
+textarea{resize:vertical}
+fieldset{border:1px solid var(--cor-borda);border-radius:var(--raio);padding:14px 16px;display:flex;flex-direction:column;gap:12px;margin:0;min-width:0}
+legend{padding:0 6px;color:var(--cor-texto)}
+.marca-check{flex-direction:row!important;align-items:center;gap:10px!important;color:var(--cor-texto)!important;min-height:44px}
+.marca-check input{width:20px;height:20px;min-height:0}
+.cartao{background:var(--cor-superficie);border:1px solid var(--cor-borda);border-radius:var(--raio);padding:18px;margin:20px 0}
+.erro{color:var(--cor-erro);font-size:14px}
+.erro-caixa{border-color:var(--cor-erro)}
+.botao.perigo{background:transparent;color:var(--cor-erro);border-color:var(--cor-erro)}
+.botao.mini{min-height:36px;padding:4px 12px;font-size:14px}
+.botao:disabled{opacity:.45;cursor:not-allowed}
+.selo{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--cor-borda);color:var(--cor-texto-suave)}
+.selo-publicado{color:var(--cor-sucesso);border-color:var(--cor-sucesso)}
+.selo-rascunho{color:var(--cor-aviso);border-color:var(--cor-aviso)}
+.abas{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--cor-borda);margin-bottom:24px}
+.abas a{padding:12px 18px;min-height:44px;color:var(--cor-texto-suave);border-bottom:3px solid transparent}
+.abas a.ativa{color:var(--cor-texto);border-bottom-color:var(--cor-principal)}
+.tabela{border:1px solid var(--cor-borda);border-radius:var(--raio);overflow:hidden}
+.tabela .linha{display:grid;grid-template-columns:3fr 1fr .6fr .6fr 1.2fr;gap:12px;padding:14px 16px;align-items:center;border-top:1px solid var(--cor-borda);min-height:44px}
+.tabela .linha:first-child{border-top:0}
+.tabela .linha.cab{background:var(--cor-superficie);color:var(--cor-texto-suave);font-size:13px}
+.tabela a.linha:hover{background:var(--cor-superficie-2)}
+.tabela small{display:block;color:var(--cor-texto-suave)}
+.linha-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.linha-form input{flex:1 1 220px;width:auto}
+.modulo-cab{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:12px}
+.modulo-cab .linha-form{flex:1 1 320px}
+.mini-acoes{display:flex;gap:6px;align-items:center}
+.mini-acoes form{margin:0}
+.lista-edicao{list-style:none;margin:0 0 14px;padding:0}
+.lista-edicao li{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--cor-borda)}
+.lista-edicao li:first-child{border-top:0}
+.lista-edicao .titulo-aula{flex:1 1 220px;min-width:0}
+.lista-edicao form{margin:0}
+.previa-capa{width:140px;aspect-ratio:2/3;object-fit:cover;border-radius:var(--raio);border:1px solid var(--cor-borda)}
+.pendencia{margin:6px 0}
+.pendencia.bloqueio{color:var(--cor-erro)}
+.pendencia.aviso-p{color:var(--cor-aviso)}
+.pendencia.ok{color:var(--cor-sucesso)}
+.faixa-previa{background:var(--cor-secundaria);color:var(--cor-sobre-secundaria);padding:10px 16px;border-radius:var(--raio);margin-bottom:16px;font-weight:700}
+@media (max-width:900px){
+  body.painel .lateral{display:flex;position:static;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:8px 12px}
+  body.painel .lateral nav{flex-direction:row;flex-wrap:wrap;margin:0}
+  body.painel .corpo{margin-left:0}
+  .sair-lateral{margin:0 0 0 auto}
+  .tabela .linha{grid-template-columns:1fr 1fr}
+  .tabela .linha.cab{display:none}
+}

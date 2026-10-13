@@ -28,7 +28,7 @@ class ArquivoController extends Controller
         $aluno = Auth::guard('aluno')->user();
         $material = Material::query()->findOrFail($id);
         $aula = Aula::query()->publicadas()->findOrFail($material->aula_id);
-        $curso = Curso::query()->publicados()->findOrFail($aula->curso_id);
+        $curso = Curso::query()->acessiveis()->findOrFail($aula->curso_id);
 
         abort_if($progresso->matriculaAtiva($aluno, $curso) === null, 403);
 

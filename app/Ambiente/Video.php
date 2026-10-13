@@ -23,4 +23,41 @@ class Video
             default => null,
         };
     }
+
+    /**
+     * Aceita o que o parceiro cola (endereço completo ou só o código) e devolve o código limpo,
+     * ou null se não reconhecer. Nunca devolve texto que não passe no formato do provedor.
+     */
+    public static function extrairRef(?string $provedor, string $entrada): ?string
+    {
+        $entrada = trim($entrada);
+
+        $candidato = match ($provedor) {
+            'youtube' => self::deUrl($entrada, [
+                '~^(?:https?://)?(?:www\.|m\.)?youtube(?:-nocookie)?\.com/(?:watch\?(?:[^#]*&)?v=|embed/|shorts/|live/)([A-Za-z0-9_-]{6,20})~i',
+                '~^(?:https?://)?youtu\.be/([A-Za-z0-9_-]{6,20})~i',
+            ]),
+            'vimeo' => self::deUrl($entrada, [
+                '~^(?:https?://)?(?:www\.)?vimeo\.com/(?:video/)?([0-9]{5,15})~i',
+                '~^(?:https?://)?player\.vimeo\.com/video/([0-9]{5,15})~i',
+            ]),
+            default => null,
+        };
+
+        $candidato ??= $entrada;
+
+        return self::urlIncorporada($provedor, $candidato) !== null ? $candidato : null;
+    }
+
+    /** @param  list<string>  $padroes */
+    private static function deUrl(string $entrada, array $padroes): ?string
+    {
+        foreach ($padroes as $padrao) {
+            if (preg_match($padrao, $entrada, $m) === 1) {
+                return $m[1];
+            }
+        }
+
+        return null;
+    }
 }

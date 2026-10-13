@@ -17,8 +17,11 @@ class CursoController extends Controller
     public function mostrar(string $slug)
     {
         $aluno = Auth::guard('aluno')->user();
-        $curso = Curso::query()->with('capa')->publicados()->where('slug', $slug)->firstOrFail();
+        $curso = Curso::query()->with('capa')->acessiveis()->where('slug', $slug)->firstOrFail();
         $matricula = $this->progresso->matriculaAtiva($aluno, $curso);
+
+        // Curso arquivado some para quem não está matriculado.
+        abort_if($curso->estado === Curso::ARQUIVADO && $matricula === null, 404);
 
         $modulos = Modulo::query()->where('curso_id', $curso->id)->orderBy('ordem')->orderBy('id')->get();
         $aulas = Aula::query()->where('curso_id', $curso->id)->publicadas()

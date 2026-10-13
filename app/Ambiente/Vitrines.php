@@ -147,7 +147,7 @@ class Vitrines
             ->sortByDesc('ultimo_progresso_em')
             ->take(12);
 
-        $cursos = Curso::query()->with('capa')->publicados()->whereIn('id', $ultimos->pluck('curso_id'))->get()->keyBy('id');
+        $cursos = Curso::query()->with('capa')->acessiveis()->whereIn('id', $ultimos->pluck('curso_id'))->get()->keyBy('id');
 
         $itens = [];
         foreach ($ultimos as $matricula) {

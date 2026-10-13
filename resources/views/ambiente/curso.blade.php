@@ -8,6 +8,7 @@
   $imagem = \App\Ambiente\Capa::url($curso);
   $alvo = $matricula ? $continuar : null;
 @endphp
+@if ($previa ?? false)<div class="faixa-previa">Prévia: é assim que o aluno vê esta página. Os botões não funcionam aqui.</div>@endif
 <a class="voltar" href="{{ route('home') }}">@include('ambiente._icone', ['n' => 'seta'])Início</a>
 <section class="heroi">
   <div class="heroi-texto">
@@ -25,12 +26,16 @@
         <a class="botao" href="{{ route('aula', $alvo->id) }}">@include('ambiente._icone', ['n' => 'play'])Continuar</a>
       @elseif ($curso->gratuito && $primeira)
         <form method="post" action="{{ route('curso.iniciar', $curso->slug) }}">@csrf<button class="botao" type="submit">@include('ambiente._icone', ['n' => 'play'])Começar agora</button></form>
+      @elseif ($previa ?? false)
+        {{-- prévia: sem ações --}}
       @elseif (! $matricula)
         <span class="aviso">Este curso ainda não está liberado na sua conta.</span>
       @endif
+      @unless ($previa ?? false)
       <form method="post" action="{{ route('curso.favorito', $curso->slug) }}">@csrf
         <button class="botao secundario" type="submit" aria-pressed="{{ $favorito ? 'true' : 'false' }}">@include('ambiente._icone', ['n' => 'coracao']){{ $favorito ? 'Nos favoritos' : 'Favoritar' }}</button>
       </form>
+      @endunless
     </div>
   </div>
   <div class="heroi-capa" style="background: {{ \App\Ambiente\Capa::degrade($curso) }}">

@@ -45,11 +45,6 @@ class EquipeAuthController extends Controller
         return redirect()->intended(route('equipe.painel'));
     }
 
-    public function painel()
-    {
-        return view('equipe.painel', ['membro' => Auth::guard('equipe')->user()]);
-    }
-
     public function sair(Request $request): RedirectResponse
     {
         Auth::guard('equipe')->logout();
