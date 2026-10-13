@@ -2,7 +2,7 @@
 
 namespace App\Ambiente;
 
-use App\Models\ConfiguracaoVisual;
+use App\Models\Arquivo;
 
 /**
  * Tema do ambiente do aluno. O parceiro escolhe TOKENS (cores, fonte, raio), nunca CSS livre
@@ -29,6 +29,8 @@ class Tema
         'fonte_titulo' => 'sora',
         'fonte_texto' => 'inter',
         'raio_borda' => 'suave',
+        'nome_ambiente' => null,
+        'logo_arquivo_id' => null,
     ];
 
     private const CINEMA = [
@@ -84,15 +86,56 @@ class Tema
         if (isset($escolhas['raio_borda']) && array_key_exists($escolhas['raio_borda'], self::RAIOS)) {
             $this->tokens['raio_borda'] = $escolhas['raio_borda'];
         }
+
+        if (isset($escolhas['nome_ambiente']) && is_string($escolhas['nome_ambiente'])) {
+            $nome = trim(preg_replace('/[\x00-\x1F\x7F]+/u', '', $escolhas['nome_ambiente']) ?? '');
+            $this->tokens['nome_ambiente'] = $nome !== '' ? mb_substr($nome, 0, 60) : null;
+        }
+
+        if (isset($escolhas['logo_arquivo_id']) && is_numeric($escolhas['logo_arquivo_id'])) {
+            $this->tokens['logo_arquivo_id'] = (int) $escolhas['logo_arquivo_id'];
+        }
     }
 
-    /** Tema publicado do parceiro atual (ou o padrão, se não houver). */
+    /**
+     * Tema do parceiro atual: o publicado, ou, na prévia da equipe, o rascunho (se houver).
+     * Uma instância por requisição.
+     */
     public static function doParceiro(): self
     {
-        $registro = ConfiguracaoVisual::query()
-            ->where('tipo', 'tema')->where('estado', ConfiguracaoVisual::PUBLICADO)->first();
+        $requisicao = request();
 
-        return new self($registro?->conteudo_json ?? []);
+        if ($requisicao->attributes->has('tema')) {
+            return $requisicao->attributes->get('tema');
+        }
+
+        $tema = new self(Personalizacao::efetivo('tema', $requisicao->attributes->get('previa') === true) ?? []);
+        $requisicao->attributes->set('tema', $tema);
+
+        return $tema;
+    }
+
+    /** Nome exibido do ambiente: o escolhido pelo parceiro ou o nome cadastrado. */
+    public function nome(string $padrao): string
+    {
+        return (string) ($this->tokens['nome_ambiente'] ?? $padrao);
+    }
+
+    private ?string $logo = null;
+
+    private bool $logoConsultado = false;
+
+    /** Endereço da logo, só se for imagem pública do próprio parceiro. */
+    public function logoUrl(): ?string
+    {
+        if (! $this->logoConsultado) {
+            $this->logoConsultado = true;
+            $id = $this->tokens['logo_arquivo_id'];
+            $arquivo = $id ? Arquivo::query()->whereKey($id)->where('publico', true)->first() : null;
+            $this->logo = $arquivo !== null && str_starts_with($arquivo->mime, 'image/') ? route('midia', $arquivo->uuid) : null;
+        }
+
+        return $this->logo;
     }
 
     public function token(string $chave): mixed

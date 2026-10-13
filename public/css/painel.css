@@ -63,3 +63,8 @@ legend{padding:0 6px;color:var(--cor-texto)}
   .tabela .linha{grid-template-columns:1fr 1fr}
   .tabela .linha.cab{display:none}
 }
+.linha-cor{display:flex;gap:10px;align-items:center}
+.linha-cor input[type=color]{width:56px;min-height:44px;padding:2px;border-radius:var(--raio);background:var(--cor-superficie);border:1px solid var(--cor-borda);cursor:pointer}
+.linha-cor input[type=text]{max-width:140px}
+.previa-logo{max-height:64px;max-width:240px;object-fit:contain;background:var(--cor-superficie-2);padding:8px;border-radius:var(--raio)}
+.aviso .acoes{display:inline-flex;margin-left:12px;vertical-align:middle}
