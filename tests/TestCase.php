@@ -19,5 +19,13 @@ abstract class TestCase extends BaseTestCase
                 "Recusado: o banco '{$banco}' não parece ser de teste (o nome deve conter 'test')."
             );
         }
+
+        $auditoria = (string) config('database.connections.audit.database');
+
+        if (! str_contains($auditoria, 'test')) {
+            throw new RuntimeException(
+                "Recusado: o banco de auditoria '{$auditoria}' não parece ser de teste."
+            );
+        }
     }
 }

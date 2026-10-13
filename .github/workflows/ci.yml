@@ -34,6 +34,12 @@ jobs:
       DB_DATABASE: unyeducation_test
       DB_USERNAME: root
       DB_PASSWORD: root
+      # Auditoria: a aplicação usa uma conta só com INSERT e SELECT (UNY-DOC-008, 9.3);
+      # as migrações usam a conta com permissão de criar tabelas.
+      AUDIT_DB_USERNAME: ava_audit_app
+      AUDIT_DB_PASSWORD: audit
+      AUDIT_MIGRATOR_USERNAME: root
+      AUDIT_MIGRATOR_PASSWORD: root
     steps:
       - uses: actions/checkout@v4
 
@@ -45,6 +51,13 @@ jobs:
 
       - name: Instalar dependências
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Preparar banco de auditoria
+        run: |
+          mysql -h127.0.0.1 -uroot -proot -e "
+            CREATE DATABASE ava_audit_test;
+            CREATE USER 'ava_audit_app'@'%' IDENTIFIED BY 'audit';
+            GRANT INSERT, SELECT ON ava_audit_test.* TO 'ava_audit_app'@'%';"
 
       - name: Preparar aplicação
         run: |

@@ -1,6 +1,8 @@
 <?php
 
-use App\Models\User;
+use App\Models\Aluno;
+use App\Models\MembroEquipe;
+use App\Models\Operador;
 
 return [
 
@@ -16,8 +18,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => env('AUTH_GUARD', 'aluno'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'alunos'),
     ],
 
     /*
@@ -38,10 +40,10 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+        // Três públicos, três guardas: nunca compartilham sessão de login.
+        'aluno' => ['driver' => 'session', 'provider' => 'alunos'],
+        'equipe' => ['driver' => 'session', 'provider' => 'equipe'],
+        'operador' => ['driver' => 'session', 'provider' => 'operadores'],
     ],
 
     /*
@@ -62,15 +64,11 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        // Aluno e MembroEquipe usam o escopo de parceiro: uma conta de outro parceiro
+        // simplesmente não é encontrada.
+        'alunos' => ['driver' => 'eloquent', 'model' => Aluno::class],
+        'equipe' => ['driver' => 'eloquent', 'model' => MembroEquipe::class],
+        'operadores' => ['driver' => 'eloquent', 'model' => Operador::class],
     ],
 
     /*
@@ -93,12 +91,7 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+        // Redefinição de senha entra em um marco posterior.
     ],
 
     /*
