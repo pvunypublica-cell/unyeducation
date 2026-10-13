@@ -12,6 +12,7 @@ use App\Models\Curso;
 use App\Models\Dominio;
 use App\Models\Material;
 use App\Models\Matricula;
+use App\Models\MembroEquipe;
 use App\Models\Modulo;
 use App\Models\Parceiro;
 use App\Models\Plano;
@@ -60,8 +61,9 @@ class PopularDemo extends Command
 
         $host = mb_strtolower((string) ($this->option('host') ?: RegrasDeSlug::hostPadrao($slug)));
         $senha = Str::password(14, symbols: false);
+        $senhaEquipe = Str::password(14, symbols: false);
 
-        DB::transaction(function () use ($slug, $host, $senha, $contexto): void {
+        DB::transaction(function () use ($slug, $host, $senha, $senhaEquipe, $contexto): void {
             $plano = Plano::query()->where('ativo', true)->orderBy('id')->first()
                 ?? Plano::create(['nome' => 'Piloto', 'ativo' => true]);
 
@@ -71,14 +73,21 @@ class PopularDemo extends Command
                 'estado' => Dominio::ATIVO, 'principal' => true, 'verificado_em' => now(),
             ]);
 
-            $contexto->runAs($parceiro->id, function () use ($parceiro, $senha): void {
+            $contexto->runAs($parceiro->id, function () use ($parceiro, $senha, $senhaEquipe): void {
                 $this->popular($parceiro, $senha);
+
+                MembroEquipe::create([
+                    'nome' => 'Administrador Demonstração', 'email' => 'admin@exemplo.com', 'senha_hash' => Hash::make($senhaEquipe),
+                    'papel' => MembroEquipe::ADMINISTRADOR, 'pode_publicar' => true, 'estado' => MembroEquipe::ATIVO,
+                ]);
             });
         });
 
         $this->info("Pronto. Abra: http://{$host}");
         $this->line('Aluno de demonstração: demo@exemplo.com');
-        $this->line("Senha (anote agora): {$senha}");
+        $this->line("Senha do aluno (anote agora): {$senha}");
+        $this->line("Equipe: admin@exemplo.com — entre em http://{$host}/equipe/entrar");
+        $this->line("Senha da equipe (anote agora): {$senhaEquipe}");
 
         return self::SUCCESS;
     }
