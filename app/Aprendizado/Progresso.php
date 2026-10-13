@@ -137,7 +137,7 @@ class Progresso
 
     public function primeira(int $cursoId): ?Aula
     {
-        return Aula::query()->where('curso_id', $cursoId)->publicadas()
+        return Aula::query()->where('aulas.curso_id', $cursoId)->where('aulas.publicada', true)
             ->join('modulos', 'modulos.id', '=', 'aulas.modulo_id')
             ->orderBy('modulos.ordem')->orderBy('modulos.id')->orderBy('aulas.ordem')->orderBy('aulas.id')
             ->select('aulas.*')->first();

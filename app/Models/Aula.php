@@ -35,7 +35,7 @@ class Aula extends Model
     /** Só aulas publicadas contam no progresso e aparecem para o aluno (FS-REG-021). */
     public function scopePublicadas(Builder $consulta): Builder
     {
-        return $consulta->where('publicada', true);
+        return $consulta->where($consulta->qualifyColumn('publicada'), true);
     }
 
     public function curso(): BelongsTo
