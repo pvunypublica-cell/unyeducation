@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\StartSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
             ResolverParceiro::class,
             IsolarSessao::class,
         ]);
+
+        // O Laravel reordena o middleware por prioridade: sem isto, a autenticação e o limite de
+        // tentativas rodariam ANTES de o parceiro ser descoberto.
+        $middleware->appendToPriorityList(after: StartSession::class, append: ResolverParceiro::class);
+        $middleware->appendToPriorityList(after: ResolverParceiro::class, append: IsolarSessao::class);
 
         $middleware->redirectGuestsTo(
             fn (Request $request) => $request->is('equipe', 'equipe/*') ? route('equipe.login') : route('login'),

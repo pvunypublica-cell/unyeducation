@@ -19,7 +19,7 @@ class CriarParceiro extends Command
     protected $signature = 'parceiro:criar
         {slug : Identificador do parceiro (minúsculas, números e hífen)}
         {nome : Nome exibido}
-        {--host= : Endereço próprio, no lugar do padrão ava-{slug}.{domínio} (útil em desenvolvimento)}
+        {--host= : Endereço próprio, no lugar do padrão (útil em desenvolvimento)}
         {--admin-email= : Cria o primeiro administrador com este e-mail}
         {--admin-nome=Administrador : Nome do primeiro administrador}';
 

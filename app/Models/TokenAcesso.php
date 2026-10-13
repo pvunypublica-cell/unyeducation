@@ -13,11 +13,15 @@ class TokenAcesso extends Model
 {
     use BelongsToTenant, ComTimestampsPt;
 
-    public const UPDATED_AT = null;
-
     protected $table = 'tokens_acesso';
 
     protected $guarded = ['tenant_id'];
+
+    // Só existe criado_em: o token nunca é atualizado, apenas marcado como usado.
+    public function getUpdatedAtColumn(): ?string
+    {
+        return null;
+    }
 
     protected function casts(): array
     {
