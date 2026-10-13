@@ -65,7 +65,29 @@ jobs:
           php artisan key:generate
 
       - name: Testes
-        run: php artisan test
+        run: vendor/bin/phpunit --log-junit junit.xml
+
+      - name: Resumo das falhas (anotações)
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          try:
+              raiz = ET.parse('junit.xml').getroot()
+          except Exception as e:
+              print(f"::error::Sem junit.xml: {e}")
+              raise SystemExit(0)
+          n = 0
+          for caso in raiz.iter('testcase'):
+              for tipo in ('failure', 'error'):
+                  for f in caso.findall(tipo):
+                      if n >= 40:
+                          break
+                      txt = (f.text or f.get('message') or '').strip().replace('%', '%25').replace('\r', '').replace('\n', '%0A')[:900]
+                      print(f"::error title={caso.get('class') or caso.get('classname')}::{caso.get('name')} -> {txt}")
+                      n += 1
+          print(f"Total de falhas listadas: {n}")
+          PY
 
       - name: Estilo de código (Pint)
         run: vendor/bin/pint --test
