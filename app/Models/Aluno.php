@@ -21,6 +21,9 @@ class Aluno extends Authenticatable
 
     protected $hidden = ['senha_hash', 'remember_token'];
 
+    // Mesmos padrões da tabela, para o objeto recém-criado já refletir o banco.
+    protected $attributes = ['estado' => 'ativo'];
+
     protected function casts(): array
     {
         return [

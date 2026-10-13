@@ -145,7 +145,7 @@ class LoginDoAlunoTest extends TestCase
 
         $this->actingAs($aluno, 'aluno')
             ->post($this->urlDe($a, '/sair'))
-            ->assertRedirect($this->urlDe($a, '/'));
+            ->assertRedirect($this->urlDe($a, ''));
 
         $this->assertGuest('aluno');
     }

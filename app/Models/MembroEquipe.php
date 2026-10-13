@@ -29,6 +29,9 @@ class MembroEquipe extends Authenticatable
 
     protected $hidden = ['senha_hash', 'remember_token'];
 
+    // Mesmos padrões da tabela, para o objeto recém-criado já refletir o banco.
+    protected $attributes = ['estado' => 'convidado', 'pode_publicar' => false];
+
     protected function casts(): array
     {
         return ['pode_publicar' => 'boolean'];

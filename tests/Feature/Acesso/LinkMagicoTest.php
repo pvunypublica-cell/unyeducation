@@ -92,6 +92,8 @@ class LinkMagicoTest extends TestCase
 
         $this->post($url)->assertRedirect($this->urlDe($a, '/minha-conta'));
 
+        // Segundo uso, de um navegador sem sessão.
+        $this->flushSession();
         $this->app['auth']->forgetGuards();
         $this->post($url)->assertRedirect($this->urlDe($a, '/entrar'))->assertSessionHasErrors('email');
         $this->assertGuest('aluno');

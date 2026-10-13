@@ -19,6 +19,8 @@ class Operador extends Authenticatable
 
     protected $hidden = ['senha_hash', 'remember_token'];
 
+    protected $attributes = ['ativo' => true, 'papel' => 'suporte'];
+
     protected function casts(): array
     {
         return ['ativo' => 'boolean'];
