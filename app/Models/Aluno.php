@@ -32,6 +32,17 @@ class Aluno extends Authenticatable
         ];
     }
 
+    /**
+     * Ids dos cursos favoritados, como mapa (id => true) para consulta rápida.
+     *
+     * @return array<int, true>
+     */
+    public function favoritosIds(): array
+    {
+        return Favorito::query()->where('aluno_id', $this->id)->pluck('curso_id')
+            ->mapWithKeys(fn ($id) => [(int) $id => true])->all();
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Aluno $aluno): void {
