@@ -81,6 +81,22 @@ Route::prefix('equipe')->group(function () {
         Route::post('/aulas/{id}/materiais', [Equipe\AulaController::class, 'enviarMaterial'])->whereNumber('id')->name('equipe.materiais.enviar');
         Route::post('/materiais/{id}/apagar', [Equipe\AulaController::class, 'apagarMaterial'])->whereNumber('id')->name('equipe.materiais.apagar');
 
+        // Home e aparência (M3b)
+        Route::get('/home', [Equipe\VitrinesController::class, 'index'])->name('equipe.home');
+        Route::post('/home/banner', [Equipe\VitrinesController::class, 'banner'])->name('equipe.home.banner');
+        Route::post('/home/vitrines', [Equipe\VitrinesController::class, 'adicionar'])->name('equipe.home.vitrines.adicionar');
+        Route::post('/home/vitrines/{id}', [Equipe\VitrinesController::class, 'atualizar'])->where('id', '[A-Za-z0-9-]+')->name('equipe.home.vitrines.atualizar');
+        Route::post('/home/vitrines/{id}/mover', [Equipe\VitrinesController::class, 'mover'])->where('id', '[A-Za-z0-9-]+')->name('equipe.home.vitrines.mover');
+        Route::post('/home/vitrines/{id}/remover', [Equipe\VitrinesController::class, 'remover'])->where('id', '[A-Za-z0-9-]+')->name('equipe.home.vitrines.remover');
+        Route::post('/home/publicar', [Equipe\VitrinesController::class, 'publicar'])->name('equipe.home.publicar');
+        Route::post('/home/descartar', [Equipe\VitrinesController::class, 'descartar'])->name('equipe.home.descartar');
+        Route::get('/previa', [Equipe\VitrinesController::class, 'previa'])->name('equipe.previa');
+
+        Route::get('/aparencia', [Equipe\AparenciaController::class, 'index'])->name('equipe.aparencia');
+        Route::post('/aparencia', [Equipe\AparenciaController::class, 'salvar'])->name('equipe.aparencia.salvar');
+        Route::post('/aparencia/publicar', [Equipe\AparenciaController::class, 'publicar'])->name('equipe.aparencia.publicar');
+        Route::post('/aparencia/descartar', [Equipe\AparenciaController::class, 'descartar'])->name('equipe.aparencia.descartar');
+
         Route::get('/categorias', [Equipe\CategoriaController::class, 'index'])->name('equipe.categorias');
         Route::post('/categorias', [Equipe\CategoriaController::class, 'salvar'])->name('equipe.categorias.salvar');
         Route::post('/categorias/{id}/alternar', [Equipe\CategoriaController::class, 'alternar'])->whereNumber('id')->name('equipe.categorias.alternar');

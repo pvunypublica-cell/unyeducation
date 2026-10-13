@@ -4,8 +4,8 @@ namespace App\Ambiente;
 
 use App\Aprendizado\Progresso;
 use App\Models\Aluno;
+use App\Models\Arquivo;
 use App\Models\Categoria;
-use App\Models\ConfiguracaoVisual;
 use App\Models\Curso;
 use App\Models\Matricula;
 use App\Models\Parceiro;
@@ -41,11 +41,10 @@ class Vitrines
     }
 
     /** @return array<string, mixed> */
-    public function configuracao(Parceiro $parceiro): array
+    public function configuracao(Parceiro $parceiro, bool $previa = false): array
     {
         $padrao = self::configuracaoPadrao($parceiro);
-        $publicada = ConfiguracaoVisual::query()
-            ->where('tipo', 'home')->where('estado', ConfiguracaoVisual::PUBLICADO)->first()?->conteudo_json;
+        $publicada = Personalizacao::efetivo('home', $previa);
 
         if (! is_array($publicada)) {
             return $padrao;
@@ -53,22 +52,48 @@ class Vitrines
 
         return [
             'banner' => array_merge($padrao['banner'], is_array($publicada['banner'] ?? null) ? $publicada['banner'] : []),
-            'vitrines' => is_array($publicada['vitrines'] ?? null) ? $publicada['vitrines'] : $padrao['vitrines'],
+            'vitrines' => self::normalizar(is_array($publicada['vitrines'] ?? null) ? $publicada['vitrines'] : $padrao['vitrines']),
         ];
+    }
+
+    /**
+     * Garante um identificador estável em cada vitrine. Configurações antigas, sem id, recebem
+     * um derivado da posição; ao salvar o rascunho o id passa a fazer parte do conteúdo.
+     *
+     * @param  array<int, mixed>  $vitrines
+     * @return list<array<string, mixed>>
+     */
+    public static function normalizar(array $vitrines): array
+    {
+        $saida = [];
+        foreach (array_values($vitrines) as $i => $v) {
+            if (! is_array($v)) {
+                continue;
+            }
+            $v['id'] = isset($v['id']) && is_string($v['id']) && $v['id'] !== '' ? $v['id'] : "legado-{$i}";
+            $saida[] = $v;
+        }
+
+        return $saida;
     }
 
     /**
      * @return array{banner: array<string, mixed>, continuar: list<array<string, mixed>>, vitrines: list<array<string, mixed>>}
      */
-    public function montar(Aluno $aluno, Parceiro $parceiro): array
+    public function montar(?Aluno $aluno, Parceiro $parceiro, bool $previa = false): array
     {
-        $config = $this->configuracao($parceiro);
-        $matriculas = Matricula::query()->where('aluno_id', $aluno->id)->get()->keyBy('curso_id');
-        $favoritos = $aluno->favoritosIds();
+        $config = $this->configuracao($parceiro, $previa);
+        // Na prévia da equipe não há aluno: nada de matrícula, progresso ou favoritos.
+        $matriculas = $aluno ? Matricula::query()->where('aluno_id', $aluno->id)->get()->keyBy('curso_id') : collect();
+        $favoritos = $aluno ? $aluno->favoritosIds() : [];
 
         $vitrines = [];
         foreach ($config['vitrines'] as $definicao) {
-            $cursos = $this->cursosDaVitrine(is_array($definicao) ? $definicao : []);
+            if (($definicao['ativa'] ?? true) === false) {
+                continue;
+            }
+
+            $cursos = $this->cursosDaVitrine($definicao);
 
             if ($cursos->isEmpty()) {
                 continue; // vitrine vazia não aparece
@@ -81,7 +106,7 @@ class Vitrines
         }
 
         return [
-            'banner' => $config['banner'],
+            'banner' => $this->banner($config['banner']),
             'continuar' => $this->continuarAssistindo($matriculas),
             'vitrines' => $vitrines,
         ];
@@ -97,8 +122,60 @@ class Vitrines
             'recentes' => $consulta->get(),
             'gratuitos' => $consulta->where('gratuito', true)->get(),
             'categoria' => $this->daCategoria($consulta, (string) ($definicao['categoria'] ?? '')),
+            'manual' => $this->manual($definicao),
             default => collect(),
         };
+    }
+
+    /**
+     * Seleção manual: respeita a ordem escolhida e ignora curso que deixou de estar publicado.
+     *
+     * @return Collection<int, Curso>
+     */
+    private function manual(array $definicao): Collection
+    {
+        $ids = array_values(array_filter(array_map('intval', (array) ($definicao['cursos'] ?? []))));
+
+        if ($ids === []) {
+            return collect();
+        }
+
+        $cursos = Curso::query()->with('capa')->publicados()->whereIn('id', $ids)->get()->keyBy('id');
+
+        return collect($ids)->map(fn (int $id) => $cursos->get($id))->filter()->values();
+    }
+
+    /**
+     * Banner pronto para exibir: destino resolvido e imagens só se forem públicas do parceiro.
+     *
+     * @param  array<string, mixed>  $b
+     * @return array<string, mixed>
+     */
+    private function banner(array $b): array
+    {
+        $href = match ($b['botao_tipo'] ?? 'busca') {
+            'curso' => ($slug = Curso::query()->publicados()->whereKey((int) ($b['botao_curso_id'] ?? 0))->value('slug')) ? route('curso', $slug) : null,
+            'url' => preg_match('~^https://~i', (string) ($b['botao_url'] ?? '')) === 1 ? (string) $b['botao_url'] : null,
+            'nenhum' => null,
+            default => route('busca'),
+        };
+
+        $imagem = function (mixed $id): ?string {
+            $arquivo = $id ? Arquivo::query()->whereKey((int) $id)->where('publico', true)->first() : null;
+
+            return $arquivo !== null && str_starts_with($arquivo->mime, 'image/') ? route('midia', $arquivo->uuid) : null;
+        };
+
+        $desktop = $imagem($b['imagem_desktop_id'] ?? null);
+
+        return [
+            'titulo' => (string) ($b['titulo'] ?? ''),
+            'texto' => (string) ($b['texto'] ?? ''),
+            'botao_rotulo' => (string) ($b['botao_rotulo'] ?? ''),
+            'href' => $href,
+            'imagem_desktop' => $desktop,
+            'imagem_mobile' => $imagem($b['imagem_mobile_id'] ?? null) ?? $desktop,
+        ];
     }
 
     /** @return Collection<int, Curso> */

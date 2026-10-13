@@ -14,6 +14,8 @@ class ConfiguracaoVisual extends Model
 {
     use BelongsToTenant, ComTimestampsPt;
 
+    public const RASCUNHO = 'rascunho';
+
     public const PUBLICADO = 'publicado';
 
     protected $table = 'configuracoes_visuais';

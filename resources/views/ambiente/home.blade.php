@@ -1,11 +1,19 @@
 @extends('layouts.ambiente')
 @section('titulo', 'Início')
 @section('conteudo')
-  <section class="banner">
+  <section @class(['banner', 'com-imagem' => $banner['imagem_desktop']])>
+    @if ($banner['imagem_desktop'])
+      <picture class="banner-img">
+        <source media="(max-width: 900px)" srcset="{{ $banner['imagem_mobile'] }}">
+        <img src="{{ $banner['imagem_desktop'] }}" alt="">
+      </picture>
+    @endif
     <div class="banner-texto">
-      <h1>{{ $banner['titulo'] ?? $parceiro->nome }}</h1>
-      <p>{{ $banner['texto'] ?? '' }}</p>
-      <a class="botao" href="{{ route('busca') }}">{{ $banner['botao_rotulo'] ?? 'Explorar cursos' }}</a>
+      @if ($banner['titulo'] !== '')<h1>{{ $banner['titulo'] }}</h1>@endif
+      @if ($banner['texto'] !== '')<p>{{ $banner['texto'] }}</p>@endif
+      @if ($banner['href'] && $banner['botao_rotulo'] !== '')
+        <a class="botao" href="{{ $banner['href'] }}" @if (str_starts_with($banner['href'], 'https://') && ! str_starts_with($banner['href'], url('/'))) target="_blank" rel="noopener noreferrer" @endif>{{ $banner['botao_rotulo'] }}</a>
+      @endif
     </div>
   </section>
 

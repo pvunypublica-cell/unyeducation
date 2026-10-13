@@ -20,6 +20,10 @@
         <a href="{{ route('equipe.categorias') }}" @class(['ativo' => request()->routeIs('equipe.categorias*')])><span class="rotulo">Categorias</span></a>
       @endif
     @endif
+    @if (\App\Permissoes\Matriz::permite(auth('equipe')->user(), 'aparencia.configurar'))
+      <a href="{{ route('equipe.home') }}" @class(['ativo' => request()->routeIs('equipe.home*')])><span class="rotulo">Home e vitrines</span></a>
+      <a href="{{ route('equipe.aparencia') }}" @class(['ativo' => request()->routeIs('equipe.aparencia*')])><span class="rotulo">Aparência</span></a>
+    @endif
     <a href="{{ route('home') }}" target="_blank" rel="noopener"><span class="rotulo">Ver o ambiente do aluno ↗</span></a>
   </nav>
   <form class="sair-lateral" action="{{ route('equipe.logout') }}" method="post">@csrf<button type="submit" class="link">Sair</button></form>
