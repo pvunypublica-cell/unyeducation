@@ -69,4 +69,10 @@ trait CriaParceiros
             'pode_publicar' => $podePublicar,
         ]));
     }
+
+    /** Executa um bloco como se fosse uma requisição do parceiro (para conferir dados nos testes). */
+    protected function contexto(Parceiro $parceiro, callable $callback): mixed
+    {
+        return app(TenantContext::class)->runAs($parceiro->id, $callback);
+    }
 }

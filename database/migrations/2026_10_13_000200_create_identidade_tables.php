@@ -54,7 +54,7 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained('parceiros');
             $table->unsignedBigInteger('aluno_id');
             $table->char('token_hash', 64)->unique();
-            $table->timestamp('expira_em');
+            $table->dateTime('expira_em'); // dateTime: o MySQL 5.7 daria a um TIMESTAMP NOT NULL o padrão de se atualizar sozinho
             $table->timestamp('usado_em')->nullable();
             $table->timestamp('criado_em')->nullable();
 
