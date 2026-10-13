@@ -344,7 +344,7 @@ class HomeEAparenciaTest extends TestCase
         $this->assertSame(['Novidades', 'Para começar agora', 'Segunda V', 'Primeira V'], $titulos());
 
         $this->post($this->url($a, "/home/vitrines/{$ultimo}/remover"));
-        $this->assertSame(['Novidades', 'Para começar agora', 'Segunda V'], $titulos());
+        $this->assertSame(['Novidades', 'Para começar agora', 'Primeira V'], $titulos());
 
         $this->post($this->url($a, '/home/vitrines/nao-existe/remover'))->assertNotFound();
 
